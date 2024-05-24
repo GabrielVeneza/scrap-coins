@@ -11,19 +11,16 @@ async function Moeda () {
     // Extrai a informação desejada usando XPath
     const dolar = await page.waitForSelector('xpath////*[@id="container_table"]/table/tbody/tr[6]/td[3]');
     const dolarhoje = await (await dolar.getProperty('textContent')).jsonValue();
+
+    const iene = await page.waitForSelector('xpath////*[@id="container_table"]/table/tbody/tr[9]/td[3]');
+    const ienerhoje = await (await iene.getProperty('textContent')).jsonValue();
         
+
+    console.log(ienerhoje, dolar)
     // Fecha o navegador
     await browser.close();
 
-    return(
-        <div>
-            <h1>Moedas Hoje</h1>
-            <hr />
-            <h2>Dolar hoje: R${dolarhoje}</h2>
-            <h2>Euro hoje: R$</h2>
-            <h2>Bitcoin hoje: R$</h2>
-        </div>
-    )
+    return dolarhoje
 }
 
 export default Moeda

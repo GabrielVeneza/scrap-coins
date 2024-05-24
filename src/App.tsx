@@ -1,31 +1,37 @@
 import './App.css'
-// import Moeda from './moeda'
-
-const puppeteer = require('puppeteer');
-
+import { useEffect, useState } from 'react';
 
 async function App() {
 
-  // Inicia o navegador
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true)
 
-  // Navega até a página desejada
-  await page.goto('https://www.infomoney.com.br/ferramentas/cambio/');
+  useEffect(() => {
+    const fetchData = async () => {
+      try{
+        const response = await fetch('http://localhost:3000/scrap')
+        const result = await response.json()
+        setData(result.dolarhoje)
+      } catch (error){
+        console.error('Error fetching data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
-  // Extrai a informação desejada usando XPath
-  const dolar = await page.waitForSelector('xpath////*[@id="container_table"]/table/tbody/tr[6]/td[3]');
-  const dolarhoje = await (await dolar.getProperty('textContent')).jsonValue();
-      
-  // Fecha o navegador
-  await browser.close();
+  if(loading){
+    return <div>Loading...</div>
+  }
+  
 
   return (
     <>
       <div>
             <h1>Moedas Hoje</h1>
             <hr />
-            <h2>Dolar hoje: R${dolarhoje}</h2>
+            <h2>Dolar hoje: R${data}</h2>
             <h2>Euro hoje: R$</h2>
             <h2>Bitcoin hoje: R$</h2>
         </div>
